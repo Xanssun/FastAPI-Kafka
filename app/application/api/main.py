@@ -5,5 +5,6 @@ def create_app():
     return FastAPI(
         title = 'Simple chat',
         docs_url = '/api/docs',
-        description = 'Simple chat'
+        description = 'Simple chat',
+        debug = True,
     )
