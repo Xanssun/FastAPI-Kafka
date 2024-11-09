@@ -1,13 +1,18 @@
 from dataclasses import dataclass, field
-from uuid import uuid4
 
-from domain.values.messages import Text
+from domain.entities.base import BaseEntity
+from domain.values.messages import Text, Title
 
 
 @dataclass
-class Message:
-    oid: str = field(
-        default_factory=lambda: str(uuid4()),
+class Message(BaseEntity):
+    text: Text
+
+
+@dataclass
+class Chat(BaseEntity):
+    title: Title
+    message: set[Message] = field(
+        default_factory=set, # не уверен что лучше оставить set
         kw_only=True,
     )
-    text: Text

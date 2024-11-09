@@ -10,3 +10,12 @@ class TextTooLongException(ApplicationException):
     @property
     def message(self):
         return f'Текст сообщения "{self.text}" слишком длинный. Максимальная длина - 255 символов.'
+
+
+
+@dataclass(eq=False)
+class EmptyTextError(ApplicationException):
+
+    @property
+    def message(self):
+        return f'Текст сообщения не может быть пустым'
