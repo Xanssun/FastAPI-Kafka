@@ -11,7 +11,7 @@ class BaseEntity(ABC):
         kw_only=True,
     )
     created_at: datetime = field(
-        default_factory=datetime.now(),
+        default_factory=datetime.now,
         kw_only=True,
     )
 
