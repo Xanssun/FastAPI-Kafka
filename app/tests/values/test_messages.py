@@ -46,3 +46,5 @@ def test_add_chat_to_message():
     chat.add_message(message)
 
     assert message in chat.message
+
+
