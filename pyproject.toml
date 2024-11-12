@@ -12,6 +12,7 @@ fastapi = {extras = ["all"], version = "^0.115.4"}
 ipython = "^8.29.0"
 pytest = "^8.3.3"
 faker = "^30.8.2"
+pytest-asyncio = "^0.24.0"
 
 
 [build-system]
