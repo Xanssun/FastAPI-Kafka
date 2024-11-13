@@ -13,6 +13,8 @@ ipython = "^8.29.0"
 pytest = "^8.3.3"
 faker = "^30.8.2"
 pytest-asyncio = "^0.24.0"
+punq = "^0.7.0"
+pydantic = {extras = ["all"], version = "^2.9.2"}
 
 
 [build-system]
