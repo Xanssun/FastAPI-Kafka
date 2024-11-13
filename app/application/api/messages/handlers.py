@@ -1,4 +1,3 @@
-# from application.api.dependencies.containers import container
 from application.api.messages.schemas import (CreateChatRequestSchema,
                                               CreateChatResponseSchema)
 from domain.exception.base import ApplicationException
