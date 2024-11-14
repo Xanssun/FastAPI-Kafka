@@ -6,7 +6,7 @@ from httpx import Response
 
 
 @pytest.mark.asyncio
-def test_create_chat_success(
+async def test_create_chat_success(
     app: FastAPI,
     client: TestClient,
     faker: Faker,
@@ -22,7 +22,7 @@ def test_create_chat_success(
 
 
 @pytest.mark.asyncio
-def test_create_chat_fail_text_too_long(
+async def test_create_chat_fail_text_too_long(
     app: FastAPI,
     client: TestClient,
     faker: Faker,
@@ -38,10 +38,9 @@ def test_create_chat_fail_text_too_long(
 
 
 @pytest.mark.asyncio
-def test_create_chat_fail_text_empty(
+async def test_create_chat_fail_text_empty(
     app: FastAPI,
     client: TestClient,
-    faker: Faker,
 ):
     url = app.url_path_for('create_chat_handler')
     response: Response = client.post(url=url, json={'title': ''})
