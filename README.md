@@ -1,11 +1,24 @@
-# FastAPI + Kafka
+# FastAPI + Kafka Application
 
-Simple application with fast API + kafka + mongoDB
+Простое приложение с FastAPI, Kafka и MongoDB.
 
-## Implemented Commands
+## Описание команд Makefile
+Для управления контейнерами приложения и инфраструктуры можно использовать следующие команды:
 
-* `make app` - up application and database/infrastructure
-* `make app-logs` - follow the logs in app container
-* `make app-down` - down application and all infrastructure
-* `make app-shell` - go to contenerized interactive shell (bash)
-* `make test` - test application with pytest
+### Основные команды
+* `make app` — запускает контейнер приложения вместе с базовой инфраструктурой.
+* `make app-logs` — отслеживает логи в контейнере приложения в режиме реального времени.
+* `make app-dow`n — останавливает контейнер приложения и всю инфраструктуру.
+* `make app-shell` — открывает интерактивный shell (bash) в контейнере приложения.
+* `make test` — запускает тесты приложения с использованием pytest.
+
+### Управление хранилищами данных
+* `make storages` — запускает контейнеры для хранилищ данных.
+* `make storages-down` — останавливает контейнеры для хранилищ данных.
+
+### Полный запуск
+* `make all` — запускает все контейнеры для приложения и хранилищ данных вместе.
+
+## Установка и использование
+* Создайте файл `.env` с переменными окружения, необходимыми для работы приложения.
+* Запустите нужные компоненты, используя команды из списка выше.
