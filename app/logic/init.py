@@ -9,6 +9,8 @@ from logic.commands.messages import (CreateChatCommand,
                                      CreateMessageCommand,
                                      CreateMessageCommandHandler)
 from logic.mediator import Mediator
+from logic.queries.messages import (GetChatDetailQuery,
+                                    GetChatDetailQueryHandler)
 from motor.motor_asyncio import AsyncIOMotorClient
 from punq import Container, Scope
 from settings.config import Config
@@ -52,6 +54,7 @@ def _init_container() -> Container:
     # Command handlers
     container.register(CreateChatCommandHandler)
     container.register(CreateMessageCommandHandler)
+    container.register(GetChatDetailQueryHandler)
 
     # Mediator initialization
     def init_mediator() -> Mediator:
@@ -63,6 +66,10 @@ def _init_container() -> Container:
         mediator.register_command(
             CreateMessageCommand,
             [container.resolve(CreateMessageCommandHandler)],
+        )
+        mediator.register_query(
+            GetChatDetailQuery,
+            container.resolve(GetChatDetailQueryHandler),
         )
 
         return mediator

@@ -5,8 +5,8 @@ from domain.values.messages import Text, Title
 from infra.repositories.messages.base import (BaseChatsRepository,
                                               BaseMessagesRepository)
 from logic.commands.base import BaseCommand, CommandHandler
-from logic.exception.messages import (ChatNotFoundException,
-                                      ChatWithThatTitleAlreadyExistsException)
+from logic.exceptions.messages import (ChatNotFoundException,
+                                       ChatWithThatTitleAlreadyExistsException)
 
 
 @dataclass(frozen=True)

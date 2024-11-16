@@ -1,5 +1,5 @@
 from domain.entities.messages import Chat, Message
-from domain.values.messages import Text
+from domain.values.messages import Text, Title
 
 
 def convert_message_to_document(message: Message):
@@ -27,7 +27,7 @@ def convert_message_document_to_entity(message_document) -> Message:
 def convert_chat_document_to_entity(chat_document) -> Chat:
     return Chat(
         oid=chat_document['oid'],
-        title=chat_document['title'],
+        title=Title(value=chat_document['title']),
         created_at=chat_document['created_at'],
         message={
             convert_message_document_to_entity(message_document)
