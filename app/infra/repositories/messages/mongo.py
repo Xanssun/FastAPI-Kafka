@@ -2,11 +2,12 @@ from abc import ABC
 from dataclasses import dataclass
 
 from domain.entities.messages import Chat, Message
+from infra.repositories.filters.messages import GetMessagesFilter
 from infra.repositories.messages.base import (BaseChatsRepository,
                                               BaseMessagesRepository)
 from infra.repositories.messages.converters import (
     convert_chat_document_to_entity, convert_chat_entity_to_document,
-    convert_message_to_document)
+    convert_message_document_to_entity, convert_message_to_document)
 from motor.core import AgnosticClient
 
 
@@ -42,8 +43,15 @@ class MongoDBChatsRepository(BaseMongoDBRepository, BaseChatsRepository):
 
 @dataclass
 class MongoDBMessagesRepository(BaseMongoDBRepository, BaseMessagesRepository):
-    async def add_message(self, chat_oid: str, message: Message):
-        await self._collection.update_one(
-            {'oid': chat_oid},
-            {'$push': {'messages': convert_message_to_document(message)}},
+    async def add_message(self, message: Message):
+        await self._collection.insert_one(
+            document=convert_message_to_document(message),
         )
+    
+    async def get_messages(self, chat_oid: str, filters: GetMessagesFilter):
+        cursor = await self._collection.find({'chat_oid': chat_oid}).skip(filters.offset).limit(filters.limit)
+
+        return [
+            convert_message_document_to_entity(message_document=message_document)
+            async for message_document in cursor
+        ]

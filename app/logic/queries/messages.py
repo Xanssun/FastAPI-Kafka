@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Generic
 
 from domain.entities.messages import Chat
+from infra.repositories.filters.messages import GetMessagesFilter
 from infra.repositories.messages.base import (BaseChatsRepository,
                                               BaseMessagesRepository)
 from logic.exceptions.messages import ChatNotFoundException
@@ -14,7 +15,13 @@ class GetChatDetailQuery(BaseQuery):
 
 
 @dataclass(frozen=True)
-class GetChatDetailQueryHandler(BaseQueryHandler, Generic[QR, QT]):
+class GetMessagesQuery(BaseQuery):
+    chat_oid: str
+    filters: GetMessagesFilter
+
+
+@dataclass(frozen=True)
+class GetChatDetailQueryHandler(BaseQueryHandler):
     chat_repository: BaseChatsRepository
     message_repository: BaseMessagesRepository # TODO: забирать сообщения отдельно
 
@@ -25,3 +32,14 @@ class GetChatDetailQueryHandler(BaseQueryHandler, Generic[QR, QT]):
             raise ChatNotFoundException(query.chat_oid)
         
         return chat
+
+
+@dataclass(frozen=True)
+class GetMessagesQueryHandler(BaseQueryHandler):
+    messages_repository: BaseMessagesRepository
+
+    async def handle(self, query: GetMessagesQuery):
+        return await self.messages_repository.get_messages(
+            chat_oid=query.chat_oid,
+            filters=query.filters,
+        )

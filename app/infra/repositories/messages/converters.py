@@ -14,7 +14,6 @@ def convert_chat_entity_to_document(chat: Chat):
         'oid': chat.oid,
         'title': chat.title.as_generic_type(),
         'created_at': chat.created_at,
-        'messages': [convert_message_to_document(message) for message in chat.message],
     }
 
 def convert_message_document_to_entity(message_document) -> Message:
@@ -29,8 +28,4 @@ def convert_chat_document_to_entity(chat_document) -> Chat:
         oid=chat_document['oid'],
         title=Title(value=chat_document['title']),
         created_at=chat_document['created_at'],
-        message={
-            convert_message_document_to_entity(message_document)
-            for message_document in chat_document['messages']
-        },
     )
