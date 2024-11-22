@@ -1,13 +1,14 @@
 from abc import ABC
 from dataclasses import dataclass
+from typing import Iterable
 
 from domain.entities.messages import Chat, Message
-from infra.repositories.filters.messages import GetMessagesFilter
+from infra.repositories.filters.messages import GetMessagesFilters
 from infra.repositories.messages.base import (BaseChatsRepository,
                                               BaseMessagesRepository)
 from infra.repositories.messages.converters import (
     convert_chat_document_to_entity, convert_chat_entity_to_document,
-    convert_message_document_to_entity, convert_message_to_document)
+    convert_message_document_to_entity, convert_message_entity_to_document)
 from motor.core import AgnosticClient
 
 
@@ -42,16 +43,20 @@ class MongoDBChatsRepository(BaseMongoDBRepository, BaseChatsRepository):
 
 
 @dataclass
-class MongoDBMessagesRepository(BaseMongoDBRepository, BaseMessagesRepository):
-    async def add_message(self, message: Message):
+class MongoDBMessagesRepository(BaseMessagesRepository, BaseMongoDBRepository):
+    async def add_message(self, message: Message) -> None:
         await self._collection.insert_one(
-            document=convert_message_to_document(message),
+            document=convert_message_entity_to_document(message),
         )
-    
-    async def get_messages(self, chat_oid: str, filters: GetMessagesFilter):
-        cursor = await self._collection.find({'chat_oid': chat_oid}).skip(filters.offset).limit(filters.limit)
 
-        return [
+    async def get_messages(self, chat_oid: str, filters: GetMessagesFilters) -> tuple[Iterable[Message], int]:
+        find = {'chat_oid': chat_oid}
+        cursor = self._collection.find(find).skip(filters.offset).limit(filters.limit)
+
+        messages = [
             convert_message_document_to_entity(message_document=message_document)
             async for message_document in cursor
         ]
+        count = await self._collection.count_documents(filter=find)
+
+        return messages, count

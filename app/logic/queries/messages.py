@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Generic
 
 from domain.entities.messages import Chat
-from infra.repositories.filters.messages import GetMessagesFilter
+from infra.repositories.filters.messages import GetMessagesFilters
 from infra.repositories.messages.base import (BaseChatsRepository,
                                               BaseMessagesRepository)
 from logic.exceptions.messages import ChatNotFoundException
@@ -17,7 +17,7 @@ class GetChatDetailQuery(BaseQuery):
 @dataclass(frozen=True)
 class GetMessagesQuery(BaseQuery):
     chat_oid: str
-    filters: GetMessagesFilter
+    filters: GetMessagesFilters
 
 
 @dataclass(frozen=True)
