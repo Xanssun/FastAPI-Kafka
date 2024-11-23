@@ -7,11 +7,14 @@ from logic.commands.base import CR, CT, BaseCommand, CommandHandler
 from logic.events.base import ER, ET, EventHandler
 from logic.exceptions.mediator import (CommandHandlersNotRegisteredException,
                                        EventHandlersNotRegisteredException)
+from logic.mediator.command import CommandMediator
+from logic.mediator.event import EventMediator
+from logic.mediator.query import QueryMediator
 from logic.queries.base import QR, QT, BaseQuery, BaseQueryHandler
 
 
 @dataclass(eq=False)
-class Mediator:
+class Mediator(EventMediator, CommandMediator, QueryMediator):
     events_map: dict[ET, EventHandler] = field(
         default_factory=lambda: defaultdict(list),
         kw_only=True,
