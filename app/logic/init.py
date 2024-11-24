@@ -1,5 +1,9 @@
 from functools import lru_cache
 
+from aiokafka import AIOKafkaProducer
+from domain.events.messages import NewChatCreatedEvent
+from infra.message_brokers.base import BaseMessageBroker
+from infra.message_brokers.kafka import KafkaMessageBroker
 from infra.repositories.messages.base import (BaseChatsRepository,
                                               BaseMessagesRepository)
 from infra.repositories.messages.mongo import (MongoDBChatsRepository,
@@ -8,6 +12,7 @@ from logic.commands.messages import (CreateChatCommand,
                                      CreateChatCommandHandler,
                                      CreateMessageCommand,
                                      CreateMessageCommandHandler)
+from logic.events.messages import NewChatCreatedEventHandler
 from logic.mediator.base import Mediator
 from logic.mediator.event import EventMediator
 from logic.queries.messages import (GetChatDetailQuery,
@@ -61,10 +66,19 @@ def _init_container() -> Container:
     container.register(GetChatDetailQueryHandler)
     container.register(GetMessagesQueryHandler)
 
+    def create_message_broker() -> BaseMessageBroker:
+        return KafkaMessageBroker(
+            producer=AIOKafkaProducer(bootstrap_servers=config.kafka_url)
+        )
+
+    # Message broker
+    container.register(BaseMessageBroker, factory=create_message_broker, scope=Scope.singleton)
+
     # Mediator initialization
     def init_mediator() -> Mediator:
         mediator = Mediator()
 
+        # command handlers
         create_chat_handler = CreateChatCommandHandler(
             _mediator=mediator,
             chats_repository=container.resolve(BaseChatsRepository),
@@ -75,6 +89,19 @@ def _init_container() -> Container:
             chats_repository=container.resolve(BaseChatsRepository),
         )
 
+        # event handlers
+        new_chat_created_event_handler = NewChatCreatedEventHandler(
+            broker_topic=config.new_chats_event_topic,
+            message_broker=container.resolve(BaseMessageBroker),
+        )
+
+        # events
+        mediator.register_event(
+            NewChatCreatedEvent,
+            [new_chat_created_event_handler],
+        )
+
+        # commands
         mediator.register_command(
             CreateChatCommand,
             [create_chat_handler],
@@ -83,6 +110,8 @@ def _init_container() -> Container:
             CreateMessageCommand,
             [create_message_handler],
         )
+
+        # queries
         mediator.register_query(
             GetChatDetailQuery,
             container.resolve(GetChatDetailQueryHandler),
